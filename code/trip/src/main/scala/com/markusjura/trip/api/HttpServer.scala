@@ -24,7 +24,7 @@ class HttpServer(implicit system: ActorSystem) extends Logging with Directives {
   private implicit val ec  = system.dispatcher
 
   private val address = "0.0.0.0"
-  private val port    = 8080
+  private val port    = 8090
 
   private val shutdown = CoordinatedShutdown(system)
 
