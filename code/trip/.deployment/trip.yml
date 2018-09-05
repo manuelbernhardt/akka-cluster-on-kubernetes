@@ -25,6 +25,16 @@ spec:
         app: trip
         name: trip
     spec:
+#      affinity:
+#        podAntiAffinity:
+#          requiredDuringSchedulingIgnoredDuringExecution:
+#          - labelSelector:
+#              matchExpressions:
+#              - key: app
+#                operator: In
+#                values:
+#                - trip
+#            topologyKey: kubernetes.io/hostname
       # Termination grace period calculates as:
       # Internal shutdown timeout (10) + preStop timeout (8) + 5 seconds buffer time
       terminationGracePeriodSeconds: 23
@@ -43,12 +53,12 @@ spec:
           protocol: TCP
         # trip http server
         - name: service
-          containerPort: 8080
+          containerPort: 8090
         readinessProbe:
           httpGet:
             scheme: HTTP
             path: /system/readiness
-            port: 8080
+            port: 8090
           # It will take at least 15 seconds that the app is started. Hence, perform the first readiness check after this time.
           initialDelaySeconds: 15
           timeoutSeconds: 2
@@ -58,7 +68,7 @@ spec:
           httpGet:
             scheme: HTTP
             path: /system/liveness
-            port: 8080
+            port: 8090
           # Give the app 30 seconds time to start up before performing the first liveness check.
           initialDelaySeconds: 30
           timeoutSeconds: 2
@@ -73,7 +83,6 @@ spec:
               # The sleep time is based on the time it takes that the readiness check fails:
               #   readinessProbe.failureThreshold * readinessProbe.periodSeconds + readinessProbe.periodSeconds
               command: ["/bin/bash", "-c", "touch /tmp/shutdown && sleep 8"]
-
 ---
 kind: Service
 apiVersion: v1
@@ -89,8 +98,8 @@ spec:
   type: NodePort
   ports:
   - name: http
-    port: 8080
-    targetPort: 8080
+    port: 8090
+    targetPort: 8090
 
 ---
 kind: Role
