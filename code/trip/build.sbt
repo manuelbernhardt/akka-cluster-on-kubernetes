@@ -1,3 +1,4 @@
+import com.typesafe.sbt.packager.docker.Cmd
 
 lazy val `trip` =
   project
@@ -109,5 +110,6 @@ lazy val dockerSettings =
     packageSummary := "Trip Service",
     packageDescription := "Handling trips",
     dockerExposedPorts := Seq(8080, 8558),
-    dockerBaseImage := "openjdk:8-jdk"
+    dockerBaseImage := "openjdk:8-jdk",
+    dockerCommands := List(dockerCommands.value.head, Cmd("RUN", "apt-get update && apt-get install -y iptables")) ::: dockerCommands.value.tail.toList
   )
